@@ -64,7 +64,7 @@ python3 main.py
 - A quiz section containing questions and answers to popular exams such as WAEC and JAMB (still under development)
 - A whiteboard
 - Discussion rooms for students to interact with other students who use the application.
-- A platform for students 
+- A platform for students to upload and share eduational materials which will then be available to all students using the platform 
 
 Feature | Completed
 :------------ | :-------------
