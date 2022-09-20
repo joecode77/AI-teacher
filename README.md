@@ -1,4 +1,4 @@
-# Foreground extractor
+# Virtual Teacher
 ---
 ## Landing Page
 
