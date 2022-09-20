@@ -14,9 +14,11 @@ import wikipedia
 import threading
 import datetime
 import requests
+import config
 import random
 import time
 import gtts
+import http
 
 
 
@@ -70,6 +72,13 @@ class Speak(QThread):
             sd.play(data, fs)
             sd.wait()
             playing = False
+        except http.client.RemoteDisconnected:
+            data, fs = sf.read("audio/no connection.wav")
+            playing = True
+            sd.play(data, fs)
+            sd.wait()
+            playing = False
+
 
     def define(self, text):
         self.dictionary_only = Dictionary(text, handle_errors=True)
@@ -211,7 +220,7 @@ class Wikipedia(QThread):
 
         except wikipedia.exceptions.PageError:
             wikipedia_result = False
-
+            
         except requests.exceptions.ConnectionError:
             song = AudioSegment.from_wav("audio/no connection.wav")
             playing = True
@@ -224,7 +233,7 @@ class Wikipedia(QThread):
             sd.play(data, fs)
             sd.wait()
             playing = False
-
+\
 
 class GoogleSearch(QThread):
 
@@ -234,7 +243,7 @@ class GoogleSearch(QThread):
         self.combined_info = ""
         self.API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
         self.headers = {
-            "Authorization": "Bearer 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"}
+            "Authorization": config.config.get('API_KEY')}
         # print("ENTERED GOOGLE")
 
     def run(self):
@@ -352,7 +361,7 @@ class Dictionary(QThread):
                 playing = False
             else:
                 dictionary_result = True
-                # print("DONE WITH DICTIONARY")
+                print("DONE WITH DICTIONARY")
 
         except gtts.tts.gTTSError:
             data, fs = sf.read("audio/no connection.wav")
@@ -371,6 +380,18 @@ class Dictionary(QThread):
                 playing = False
             else:
                 dictionary_result = False
+
+def return_to_original_state():
+    print("RETURNING TO INITIAL STATE")
+    global dictionary_result, dictionary_displayed, wikipedia_result, wikipedia_displayed, google_result, google_displayed
+    dictionary_result = None
+    wikipedia_result = None
+    google_result = None
+
+    dictionary_displayed = False
+    wikipedia_displayed = False
+    google_displayed = False
+
 
 
 def thinkingLogic():
@@ -406,6 +427,7 @@ def thinkingLogic():
                                 play(song)
                                 playing = False
                                 wikipedia_result = None
+                                wikipedia_displayed == True
 
                                 time.sleep(2)
 
@@ -414,7 +436,7 @@ def thinkingLogic():
                                 play(song)
                                 playing = False
                                 first_second = datetime.datetime.now().second
-
+                            
                                 while True:
                                     second_time = datetime.datetime.now().second
 
@@ -428,7 +450,11 @@ def thinkingLogic():
                                                     play(song)
                                                     playing = False
                                                     google_result = None
+                                                    google_displayed = True
+                                                    
                                                     break
+                                            break
+
                                         elif "no" in answer or "nope" in answer or "never" in answer or "na" in answer:
                                             answer = None
                                             break
@@ -450,6 +476,9 @@ def thinkingLogic():
                                 play(song)
                                 playing = False
                                 break
+
+                            break
+                        
 
                     elif "no" in answer or "nope" in answer or "never" in answer or "na" in answer:
                         answer = None
@@ -477,6 +506,7 @@ def thinkingLogic():
                                 play(song)
                                 playing = False
                                 wikipedia_result = None
+                                wikipedia_displayed = True
 
                                 time.sleep(2)
 
@@ -499,7 +529,9 @@ def thinkingLogic():
                                                     play(song)
                                                     playing = False
                                                     google_result = None
+                                                    google_displayed = False
                                                     break
+                                                break
                                         elif "no" in answer or "nope" in answer or "never" in answer or "na" in answer:
                                             answer = None
                                             break
@@ -516,3 +548,4 @@ def thinkingLogic():
             
 
         in_thinking_process = False
+        print("END")

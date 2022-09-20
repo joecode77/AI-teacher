@@ -44,6 +44,7 @@ class WelcomeScreen(QMainWindow):
         self.scifi_gif = QLabel()
         self.scifi_gif.setMovie(self.movie)
         self.movie.start()
+        # self.movie.stop()
 
         self.AUDIO_PATH = "audio/welcome.wav"
         data, fs = sf.read(self.AUDIO_PATH, dtype = 'float32')

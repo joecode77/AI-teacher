@@ -17,8 +17,9 @@ from AI.artificialIntelligence import Speak, Dictionary, Wikipedia, GoogleSearch
 import AI.artificialIntelligence
 import wikipedia
 #######################################################################################################################
-
-
+from Board.board import Window
+from Dictionary.dictionary_search import DictionaryWindow
+from Quiz.quiz_home import QuizWindow
 
 class Worker(QThread):
     finished = pyqtSignal()
@@ -100,9 +101,9 @@ class SoundWaves(QThread):
         # pen = "#ff00ff"
 
 class ClassRoom(QMainWindow):
-    def __init__(self, a):
+    def __init__(self, stack):
         super().__init__()
-        self.a = a
+        self.stack = stack
         self.speak_icon = "icons/voice_muted.png"
         self.createWidgets()
         self.createLayouts()
@@ -117,12 +118,14 @@ class ClassRoom(QMainWindow):
         self.empty_action1.setEnabled(False)
 
         self.blackboard = QAction(QIcon("icons/blackboard.png"), "Blackboard")
+        self.blackboard.triggered.connect(self.openBoard)
         self.blackboard.setStatusTip("Blackboard")
 
         self.empty_action2 = QAction()
         self.empty_action2.setEnabled(False)
 
         self.quiz = QAction(QIcon("icons/quiz.png"), "Quiz")
+        self.quiz.triggered.connect(self.openQuiz)
         self.quiz.setStatusTip("Quiz")
 
         self.empty_action3 = QAction()
@@ -147,6 +150,7 @@ class ClassRoom(QMainWindow):
         self.empty_action6.setEnabled(False)
 
         self.dictionary = QAction(QIcon("icons/dictionary.png"), "Dictionary")
+        self.dictionary.triggered.connect(self.openDictionary)
         self.dictionary.setStatusTip(("Dictionary"))
 
         self.empty_action7 = QAction()
@@ -257,3 +261,18 @@ class ClassRoom(QMainWindow):
     def artificialIntelligenceAction(self):
         self.worker = Worker()
         self.worker.start()
+
+    def openBoard(self):
+        self.board = Window()
+        self.stack.addWidget(self.board)
+        self.stack.setCurrentIndex(self.stack.currentIndex() + 1)
+
+    def openDictionary(self):
+        self.open_dictionary = DictionaryWindow(self.stack)
+        self.stack.addWidget(self.open_dictionary)
+        self.stack.setCurrentIndex(self.stack.currentIndex() + 1)
+
+    def openQuiz(self):
+        self.quiz_page = QuizWindow(self.stack)
+        self.stack.addWidget(self.quiz_page)
+        self.stack.setCurrentIndex(self.stack.currentIndex() + 1)
